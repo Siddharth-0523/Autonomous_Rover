@@ -1,0 +1,4 @@
+raspberry pi4: 64 gb sd card,
+Ubuntu 24.04 Server OS
+ML model deployer
+8 gb ram

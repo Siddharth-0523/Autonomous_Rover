@@ -1,0 +1,5 @@
+raspberry pi5: 64 gb sd card
+Ubuntu 24.04 desktop version
+ROS2 jazzy 
+BRain of the entire rover
+16gb RAM
