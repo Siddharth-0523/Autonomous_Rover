@@ -3,6 +3,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 def generate_launch_description():
@@ -16,7 +17,15 @@ def generate_launch_description():
     map_file = os.path.join(pkg_rover_bringup, 'maps', 'blank_map.yaml')
     ekf_config = os.path.join(pkg_rover_bringup, 'config', 'ekf.yaml')
 
+    # -------- Arguments --------
+    slam_arg = DeclareLaunchArgument(
+        'slam',
+        default_value='False',
+        description='Whether to run SLAM (True) or Localization (False)'
+    )
+
     return LaunchDescription([
+        slam_arg,
         
         # 1. Start Robot Description (URDF + TF)
         IncludeLaunchDescription(
@@ -31,7 +40,7 @@ def generate_launch_description():
                 os.path.join(pkg_sllidar, 'launch', 'sllidar_a1_launch.py')
             ),
             launch_arguments={
-                'serial_port': '/dev/ttyUSB0',
+                'serial_port': '/dev/lidar',  # Updated to use persistent symlink
                 'frame_id': 'lidar_link'  # <--- CRITICAL FIX: Match URDF
             }.items()
         ),
@@ -85,7 +94,8 @@ def generate_launch_description():
                 'map': map_file,
                 'params_file': nav2_params,
                 'use_sim_time': 'False',
-                'autostart': 'True'
+                'autostart': 'True',
+                'slam': LaunchConfiguration('slam')
             }.items()
         ),
     ])
